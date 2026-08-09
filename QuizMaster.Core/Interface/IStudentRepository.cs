@@ -12,8 +12,8 @@ namespace QuizMaster.Core.Interface
         public Task<string> UpdateStudent(Student student);
         public Task<string> DeleteStudent(string personalNumber);
 
-        public Task<Student> LogInStudent(string Email, string password);
-        public Task<Student> VerifiStudentEmail(string email, string verifiCode);
+        //public Task<Student> LogInStudent(string Email, string password);
+        //public Task<Student> VerifiStudentEmail(string email, string verifiCode);
     
 
     }

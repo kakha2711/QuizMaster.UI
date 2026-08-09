@@ -196,15 +196,15 @@ namespace QuizMaster.Infrastructure.Repository
             return null;
         }
 
-        public Task<Student> LogInStudent(string Email, string password)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<Student> LogInStudent(string Email, string password)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
 
-        public Task<Student> VerifiStudentEmail(string email, string verifiCode)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<Student> VerifiStudentEmail(string email, string verifiCode)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
