@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QuizMaster.Core\QuizMaster.Core.csproj" />
+    <ProjectReference Include="..\QuizMaster.Service\QuizMaster.Service.csproj" />
   </ItemGroup>
 
 </Project>

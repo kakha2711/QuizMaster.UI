@@ -5,6 +5,6 @@ namespace QuizMaster.Core.Enum
     {
         InProgress, //მიმდინარეობს
         Incomplete, //არასრულად დასრულებულია.
-        NotCompleted
+        NotCompleted //არ არის დამთავრებული
     }
 }
