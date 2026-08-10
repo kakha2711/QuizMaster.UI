@@ -13,7 +13,7 @@ namespace QuizMaster.Infrastructure.Repository
         private readonly string _studentPath = "C:\\Users\\Kakha\\source\\repos\\QuizMaster.UI\\QuizMaster.Infrastructure\\Data\\Student.txt";
 
 
-        public Task<List<Student>> GetAllStudent()
+        public async Task<List<Student>> GetAllStudent()
         {
             List<Student> students = new List<Student>();
             string[] lines = File.ReadAllLines(_studentPath);
@@ -48,12 +48,12 @@ namespace QuizMaster.Infrastructure.Repository
                 }
             }
                 
-            return Task.FromResult(students);
-            //return students;
+            //return Task.FromResult(students);
+            return students;
         }
 
 
-        public Task<Student> GetStudentByPersonalNumber(string perSonalNumber)
+        public async Task<Student> GetStudentByPersonalNumber(string perSonalNumber)
         {
             if (string.IsNullOrWhiteSpace(perSonalNumber) || string.IsNullOrEmpty(perSonalNumber))
             {
@@ -65,11 +65,11 @@ namespace QuizMaster.Infrastructure.Repository
             if(student == null)
                 throw new DontFindlObjectExeption($"Student with personal number {perSonalNumber} not found.");
 
-            return Task.FromResult(student);
+            return student;
 
         }
 
-        public Task AddStudent(Student student)
+        public async Task AddStudent(Student student)
         {
             if(student == null)
             {
@@ -108,11 +108,11 @@ namespace QuizMaster.Infrastructure.Repository
             else
                 ColloringConsole.Error($"Failed to add student with personal number {student.PersonalNumber}.");
 
-                return null;
+                //return null;
         }
 
 
-        public Task<string> UpdateStudent(Student student)
+        public async Task<string> UpdateStudent(Student student)
         {
             if (student == null)
             {
@@ -161,10 +161,10 @@ namespace QuizMaster.Infrastructure.Repository
 
             result = oldCount == newCount ? $"Student with personal number {student.PersonalNumber} updated successfully." : $"Failed to update student with personal number {student.PersonalNumber}.";
 
-            return Task.FromResult(result);
+            return result;
         }
 
-        public Task<string> DeleteStudent(string personalNumber)
+        public async Task<string> DeleteStudent(string personalNumber)
         //public Task DeleteStudent(string personalNumber)
         {
             if(string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
@@ -193,7 +193,6 @@ namespace QuizMaster.Infrastructure.Repository
                 throw new DontFindlObjectExeption("No students found to delete.");
             }
 
-            return null;
         }
 
         //public Task<Student> LogInStudent(string Email, string password)

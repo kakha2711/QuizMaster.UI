@@ -1,5 +1,1 @@
-1. Task_იტ რომ ვარეთებ რეთარნში იძულებული ვარ დავწერო return Task.FromResult(students); და ლექციაზე რომ კოდი იწერებოდა იქ return students; ასეთი ფორმატით წერია და რატომ
-
-2. AddStudentში 70-ე ხაზზე  public Task AddStudent(Student student) მიწერია და ეს თასქი ხომ ვოიდია რეთარნი არ წირდება მე კიდე მაიძულებს დავწერო და რატომ
-
-3. 
+ 
