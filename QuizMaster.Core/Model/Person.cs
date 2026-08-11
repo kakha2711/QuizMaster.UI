@@ -17,7 +17,7 @@ namespace QuizMaster.Core.Model
         public string VerificationCode { get; set; }
         public bool IsVerified { get; set; } = false;
 
-        public Role Role { get; set; }
+        public Role Role { get; set; } = Role.Student;
         public Gender Gender { get; set; }
     }
 

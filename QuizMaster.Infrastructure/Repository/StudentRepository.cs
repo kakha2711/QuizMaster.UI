@@ -3,12 +3,11 @@ using QuizMaster.Core.Enum;
 using QuizMaster.Core.Interface;
 using QuizMaster.Core.Model;
 using QuizMaster.Service.Exeption;
-using System.Linq;
 using System.Text.Json;
 
 namespace QuizMaster.Infrastructure.Repository
 {
-    internal class StudentRepository : IStudentRepository
+    public class StudentRepository : IStudentRepository
     {
         private readonly string _studentPath = "C:\\Users\\Kakha\\source\\repos\\QuizMaster.UI\\QuizMaster.Infrastructure\\Data\\Student.txt";
 
@@ -164,7 +163,7 @@ namespace QuizMaster.Infrastructure.Repository
             return result;
         }
 
-        public async Task<string> DeleteStudent(string personalNumber)
+        public async Task DeleteStudent(string personalNumber)
         //public Task DeleteStudent(string personalNumber)
         {
             if(string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
