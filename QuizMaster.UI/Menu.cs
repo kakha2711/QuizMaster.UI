@@ -54,9 +54,14 @@ namespace QuizMaster.UI
 
                     await _studentService.RegistrationStudent(student);
                     break;
-                    //case "2":
-                    //    await ViewAllStudents();
-                    //    break;
+                    case "2":
+                    var tt =  _studentService.GetAllStudents().Result;
+
+                    foreach (var item in tt)
+                    {
+                        Console.WriteLine($"Id: {item.Id}, FirsName: {item.FirsName}, Lastname: {item.Lastname}, Email: {item.Email}, PhoneNumber: {item.PhoneNumber}, PhoneNumber: {item.PhoneNumber}, Password: {item.Password}, VerificationCode: {item.VerificationCode}, IsVerified: {item.IsVerified}, Role: {item.Role}, Gender: {item.Gender}, Grade: {item.Grade}");
+                    }
+                    break;
                     //case "3":
             }
         }

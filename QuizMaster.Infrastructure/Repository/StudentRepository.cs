@@ -1,4 +1,5 @@
-﻿using QuizMaster.Core;
+﻿using BCrypt.Net;
+using QuizMaster.Core;
 using QuizMaster.Core.Enum;
 using QuizMaster.Core.Interface;
 using QuizMaster.Core.Model;
@@ -24,29 +25,82 @@ namespace QuizMaster.Infrastructure.Repository
                 {
                     var studentData = line.Split(',');
 
+                    //var Id00 = studentData[0];
+                    //var Id0 = studentData[0].Split(':')[1];
+                    //var Id01 = int.Parse(studentData[0].Split(':')[1]);
+
+                    //var FirsName00 = studentData[4];
+                    //var FirsName0 = studentData[4].Split(':')[1];
+
+                    //var Lastname00 = studentData[5];
+                    //var Lastname0 = studentData[5].Split(':')[1];
+
+                    //var Email00 = studentData[6];
+                    //var Email0 = studentData[6].Split(':')[1];
+
+                    //var PhoneNumber00 = studentData[7];
+                    //var PhoneNumber0 = studentData[7].Split(':')[1];
+
+                    //var PersonalNumber00 = studentData[8];
+                    //var PersonalNumber0 = studentData[8].Split(':')[1];
+
+                    //var UserName00 = studentData[9];
+                    //var UserName0 = studentData[9].Split(':')[1];
+
+                    //var Password00 = studentData[10];
+                    //var Password0 = studentData[10].Split(':')[1];
+
+                    //var VerificationCode00 = studentData[11];
+                    //var VerificationCode0 = studentData[11].Split(':')[1];
+
+                    //var IsVerified00 = studentData[12];
+                    //var IsVerified0 = studentData[12].Split(':')[1];
+                    //var IsVerified = bool.Parse(studentData[12].Split(':')[1]);
+
+                    //var role00 = studentData[13];
+                    //var role0 = studentData[13].Split(':')[1];
+                    //var Role = Enum.Parse<Role>(studentData[13].Split(':')[1]);
+
+                    //var Gender00 = studentData[14];
+                    //var Gender0 = studentData[14].Split(':')[1];
+                    //var Gender = Enum.Parse<Gender>(studentData[14].Split(':')[1][0].ToString());
+
+                    //var Grade00 = studentData[1];
+                    //var Grade0 = studentData[1].Split(':')[1];
+                    //var Grade = double.Parse(studentData[1].Split(':')[1]);
+
+                    //var IsDelete00 = studentData[2];
+                    //var IsDelete0 = studentData[2].Split(':')[1];
+                    //var IsDelete = bool.Parse(studentData[2].Split(':')[1]);
+
+                    //var subject000 = studentData[3];
+                    //var subject0000 = studentData[3].Split(':')[1];
+
                     Student studentAdd = new Student
                     {
-                        Id = int.Parse(studentData[0]),
-                        FirsName = studentData[1],
-                        Lastname = studentData[2],
-                        Email = studentData[3],
-                        PhoneNumber = studentData[4],
-                        PersonalNumber = studentData[5],
-                        UserName = studentData[6],
-                        Password = studentData[7],
-                        VerificationCode = studentData[8],
-                        IsVerified = bool.Parse(studentData[9]),
-                        Role = Enum.Parse<Role>(studentData[10]),
-                        Gender = Enum.Parse<Gender>(studentData[11]),
-                        Grade = double.Parse(studentData[12]),
-                        IsDelete = bool.Parse(studentData[13])
+                        Id = int.Parse(studentData[0].Split(':')[1]),
+                        FirsName = studentData[4].Split(':')[1].Trim('"'),
+                        Lastname = studentData[5].Split(':')[1].Trim('"'),
+                        Email = studentData[6].Split(':')[1].Trim('"'),
+                        PhoneNumber = studentData[7].Split(':')[1].Trim('"'),
+                        PersonalNumber = studentData[8].Split(':')[1].Trim('"'),
+                        UserName = studentData[9].Split(':')[1].Trim('"'),
+                        Password = studentData[10].Split(':')[1].Trim('"'),
+                        VerificationCode = studentData[11].Split(':')[1].Trim('"'),
+                        IsVerified = bool.Parse(studentData[12].Split(':')[1]),
+                        Role = Enum.Parse<Role>(studentData[13].Split(':')[1]),
+                        Gender = Enum.Parse<Gender>(studentData[14].Split(':')[1][0].ToString()),
+                        Grade = double.Parse(studentData[1].Split(':')[1]),
+                        IsDelete = bool.Parse(studentData[2].Split(':')[1]),
+                        //Subjects = studentData[3].Split(':')[1]
                     };
 
                     if(studentAdd.IsDelete == false)
                         students.Add(studentAdd);
                 }
             }
-                
+
+            
             //return Task.FromResult(students);
             return students;
         }
@@ -75,7 +129,7 @@ namespace QuizMaster.Infrastructure.Repository
                 throw new ObjectEmptyException("Student object is null.");
             }
 
-            var students = GetAllStudent().Result.ToList();
+            var students = GetAllStudent().Result;
 
 
             if(students.Count == 0)
@@ -83,7 +137,7 @@ namespace QuizMaster.Infrastructure.Repository
             else
                 student.Id = students.Max(s => s.Id) + 1;
 
-
+            student.Password = BCrypt.Net.BCrypt.HashPassword(student.Password);
             string studentnew = JsonSerializer.Serialize(student);
 
             if(string.IsNullOrWhiteSpace(studentnew) || string.IsNullOrEmpty(studentnew))
