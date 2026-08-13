@@ -27,7 +27,7 @@ namespace QuizMaster.Service
 
             student.VerificationCode = random.Next(1000, 9999).ToString();
 
-            _studentRepository.AddStudent(student);
+            await _studentRepository.AddStudent(student);
 
         }
 
