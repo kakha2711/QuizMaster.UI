@@ -1,4 +1,5 @@
 ﻿
+using BCrypt.Net;
 using QuizMaster.Core.Interface;
 using QuizMaster.Core.Model;
 using QuizMaster.Service.Exeption;
@@ -40,6 +41,8 @@ namespace QuizMaster.Service
             return await _studentRepository.GetStudentByPersonalNumber(personalNumber);
         }
 
+
+
         public async Task DeleteStudentByPersonalNumber(string personalNumber)
         {
             if (string.IsNullOrWhiteSpace(personalNumber) || string.IsNullOrEmpty(personalNumber))
@@ -48,5 +51,49 @@ namespace QuizMaster.Service
             }
             await _studentRepository.DeleteStudent(personalNumber);
         }
+
+
+
+        public async Task VerifiStudentEmail(string email, string verificationCode)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(email))
+            {
+                throw new ObjectEmptyException("Email is null or empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(verificationCode) || string.IsNullOrEmpty(verificationCode))
+            {
+                throw new ObjectEmptyException("Verification code is null or empty.");
+            }
+
+            Student? student =  GetAllStudents().Result.Find(s => s.Email == email);
+
+            if (student == null)
+            {
+                throw new DontFindlObjectExeption("Student not found.");
+            }
+
+            if(student.VerificationCode == verificationCode)
+                student.IsVerified = true;
+
+            throw new InvalidPersonalNumberException("This is an invalid verification code.");
+
+            string tt = _studentRepository.UpdateStudent(student).Result;
+        }
+
+        public async Task LogIn(string userName, string password)
+        {
+            Student? student =  GetAllStudents().Result.Find(m=> m.UserName);
+
+            if (string.IsNullOrWhiteSpace(userName) && string.IsNullOrWhiteSpace(password))
+                throw new ObjectEmptyException("Username is null or empty.");
+
+            if (string.IsNullOrWhiteSpace(password) && string.IsNullOrWhiteSpace(password))
+                throw new ObjectEmptyException("password is null or empty.");
+
+            if(BCrypt.Net.BCrypt.Verify(password, student.Password))
+
+        }
+
     }
 }

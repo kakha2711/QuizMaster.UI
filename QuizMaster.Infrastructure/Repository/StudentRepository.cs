@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using QuizMaster.Core;
+﻿using QuizMaster.Core;
 using QuizMaster.Core.Enum;
 using QuizMaster.Core.Interface;
 using QuizMaster.Core.Model;
@@ -46,14 +45,14 @@ namespace QuizMaster.Infrastructure.Repository
                         //Subjects = studentData[3].Split(':')[1]
                     };
 
-                    if (studentAdd.IsDelete == false)
-                        students.Add(studentAdd);
+                    //if (studentAdd.IsDelete == false)
+                    students.Add(studentAdd);
                 }
                 else
                     return null;
             }
 
-            
+
             return students;
         }
 
@@ -65,9 +64,9 @@ namespace QuizMaster.Infrastructure.Repository
                 throw new InvalidPersonalNumberException("Personal number is null or empty.");
             }
 
-            Student? student = GetAllStudent().Result.FirstOrDefault(x =>x.PersonalNumber == perSonalNumber);
+            Student? student = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == perSonalNumber);
 
-            if(student == null)
+            if (student == null)
                 throw new DontFindlObjectExeption($"Student with personal number {perSonalNumber} not found.");
 
             return student;
@@ -76,7 +75,7 @@ namespace QuizMaster.Infrastructure.Repository
 
         public async Task AddStudent(Student student)
         {
-            if(student == null)
+            if (student == null)
             {
                 throw new ObjectEmptyException("Student object is null.");
             }
@@ -84,7 +83,7 @@ namespace QuizMaster.Infrastructure.Repository
             var students = GetAllStudent().Result;
 
 
-            if(students.Count == 0)
+            if (students.Count == 0)
                 student.Id = 1;
             else
                 student.Id = students.Max(s => s.Id) + 1;
@@ -92,7 +91,7 @@ namespace QuizMaster.Infrastructure.Repository
             student.Password = BCrypt.Net.BCrypt.HashPassword(student.Password);
             string studentnew = JsonSerializer.Serialize(student);
 
-            if(string.IsNullOrWhiteSpace(studentnew) || string.IsNullOrEmpty(studentnew))
+            if (string.IsNullOrWhiteSpace(studentnew) || string.IsNullOrEmpty(studentnew))
             {
                 throw new InvalidDataException("Serialized student data is null or empty.");
             }
@@ -102,7 +101,10 @@ namespace QuizMaster.Infrastructure.Repository
                 throw new DuplicatePersonalNumberException($"A student with personal number {student.PersonalNumber} already exists.");
             }
 
-            File.AppendAllText(_studentPath, studentnew + Environment.NewLine);
+            if (students.Count == 0)
+                File.AppendAllText(_studentPath, studentnew);
+            else
+                File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
 
             Student? addedStudent = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == student.PersonalNumber);
 
@@ -123,46 +125,61 @@ namespace QuizMaster.Infrastructure.Repository
                 throw new ObjectEmptyException("Student object is null.");
             }
 
-            List<Student> students = GetAllStudent().Result;
+            List<Student> students = await GetAllStudent();
 
             int oldCount = students.Count;
 
             var existingStudentId = students.FindIndex(s => s.PersonalNumber == student.PersonalNumber);
 
-            //if (existingStudentId > 0)
-            //{
-                students[existingStudentId].FirsName = student.FirsName;
-                students[existingStudentId].Lastname = student.Lastname;
-                students[existingStudentId].Email = student.Email;
-                students[existingStudentId].PhoneNumber = student.PhoneNumber;
-                students[existingStudentId].PersonalNumber = student.PersonalNumber;
-                students[existingStudentId].UserName = student.UserName;
-                students[existingStudentId].Password = student.Password;
-                students[existingStudentId].VerificationCode = student.VerificationCode;
-                students[existingStudentId].IsVerified = student.IsVerified;
-                students[existingStudentId].Role = student.Role;
-                students[existingStudentId].Gender = student.Gender;
-                students[existingStudentId].Grade = student.Grade;
-                students[existingStudentId].IsDelete = student.IsDelete;
-            //}
-            //else
-            //    throw new DontFindlObjectExeption($"Student with personal number {student.PersonalNumber} not found.");
+            students[existingStudentId].FirsName = student.FirsName;
+            students[existingStudentId].Lastname = student.Lastname;
+            students[existingStudentId].Email = student.Email;
+            students[existingStudentId].PhoneNumber = student.PhoneNumber;
+            students[existingStudentId].PersonalNumber = student.PersonalNumber;
+            students[existingStudentId].UserName = student.UserName;
+            students[existingStudentId].Password = student.Password;
+            students[existingStudentId].VerificationCode = student.VerificationCode;
+            students[existingStudentId].IsVerified = student.IsVerified;
+            students[existingStudentId].Role = student.Role;
+            students[existingStudentId].Gender = student.Gender;
+            students[existingStudentId].Grade = student.Grade;
+            students[existingStudentId].IsDelete = student.IsDelete;
+
 
             int newCount = 0;
 
-            using (StreamWriter writer = new StreamWriter(_studentPath, false))
+            //using (StreamWriter writer = new StreamWriter(_studentPath, false))
+            //{
+
+            //}
+
+            //using (StreamWriter writer = new StreamWriter(_studentPath, true))
+            //{
+            //    foreach (var item in students)
+            //    {
+            //        writer.WriteLine(item);
+            //        newCount++;
+            //    }
+            //}
+
+            File.WriteAllText(_studentPath, string.Empty);
+
+            foreach (var item in students)
             {
-                
+                //File.AppendAllText(_studentPath, item + Environment.NewLine);
+                //AddStudent(item);
+
+                string studentnew = JsonSerializer.Serialize(item);
+
+                var existingStudent = GetAllStudent().Result;
+
+                if (existingStudent.Count == 0)
+
+                    File.AppendAllText(_studentPath, studentnew);
+                else
+                    File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
             }
 
-            using (StreamWriter writer = new StreamWriter(_studentPath, false))
-            {
-                foreach (var item in students)
-                {
-                    writer.WriteLine(item);
-                    newCount++;
-                }
-            }
 
             string result = "";
 
@@ -173,20 +190,20 @@ namespace QuizMaster.Infrastructure.Repository
 
         public async Task DeleteStudent(string personalNumber)
         {
-            if(string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
+            if (string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
             {
                 throw new InvalidPersonalNumberException("Personal number is null or empty.");
             }
 
-            List<Student> students = GetAllStudent().Result.ToList();
+            List<Student> students = await GetAllStudent();
 
-            if(students.Count > 0)
+            if (students.Count > 0)
             {
                 Student? studentToDelete = students.FirstOrDefault(s => s.PersonalNumber == personalNumber);
                 if (studentToDelete != null)
                 {
                     studentToDelete.IsDelete = true;
-                    UpdateStudent(studentToDelete);
+                    await UpdateStudent(studentToDelete);
                     ColloringConsole.Success($"Student with personal number {personalNumber} deleted successfully.");
                 }
                 else
@@ -201,6 +218,6 @@ namespace QuizMaster.Infrastructure.Repository
 
         }
 
-       
+
     }
 }

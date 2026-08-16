@@ -63,7 +63,7 @@ namespace QuizMaster.UI
 
                     foreach (var item in students)
                     {
-                        Console.WriteLine($"Id: {item.Id}, FirsName: {item.FirsName}, Lastname: {item.Lastname}, Email: {item.Email}, PhoneNumber: {item.PhoneNumber}, PhoneNumber: {item.PhoneNumber}, Password: {item.Password}, VerificationCode: {item.VerificationCode}, IsVerified: {item.IsVerified}, Role: {item.Role}, Gender: {item.Gender}, Grade: {item.Grade}");
+                        Console.WriteLine($"Id: {item.Id},\n FirsName: {item.FirsName},\n Lastname: {item.Lastname},\n Email: {item.Email},\n PhoneNumber: {item.PhoneNumber},\n PersonalNumber: {item.PersonalNumber},\n Password: {item.Password},\n VerificationCode: {item.VerificationCode},\n IsVerified: {item.IsVerified},\n Role: {item.Role},\n Gender: {item.Gender},\n Grade: {item.Grade}\n\n");
                         //Console.WriteLine(item.ToString());
                     }
 
