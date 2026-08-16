@@ -1,3 +1,4 @@
 ﻿{"Id":1,"Grade":0,"IsDelete":false,"Subjects":null,"FirsName":"kakha","Lastname":"sartania","Email":"sartania.ka@gmail.com","PhoneNumber":"599985226","PersonalNumber":"01011015058","UserName":"kakha27","Password":"R!adiatori27","VerificationCode":"1983","IsVerified":false,"Role":1,"Gender":0}
 {"Id":2,"Grade":0,"IsDelete":false,"Subjects":null,"FirsName":"maiko","Lastname":"sartania","Email":"sart@gmail.com","PhoneNumber":"599850210","PersonalNumber":"01020304052","UserName":"mako8","Password":"M@ko1","VerificationCode":"9879","IsVerified":false,"Role":1,"Gender":1}
 {"Id":3,"Grade":0,"IsDelete":false,"Subjects":null,"FirsName":"lasha","Lastname":"topuria","Email":"top@gmail.com","PhoneNumber":"577121314","PersonalNumber":"98979695941","UserName":"punt1","Password":"$2a$11$b8z9G95Xc6GtEndgOPGiNuy6h.pBdwYxGdh0Q2.mniUTXPU/EopzK","VerificationCode":"8953","IsVerified":false,"Role":1,"Gender":0}
+

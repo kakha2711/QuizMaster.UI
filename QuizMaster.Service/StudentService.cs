@@ -31,5 +31,22 @@ namespace QuizMaster.Service
 
         }
 
+        public async Task<Student> GetStudentByPersonalNumber(string personalNumber)
+        {
+            if (string.IsNullOrWhiteSpace(personalNumber) || string.IsNullOrEmpty(personalNumber))
+            {
+                throw new InvalidPersonalNumberException("Personal number is null or empty.");
+            }
+            return await _studentRepository.GetStudentByPersonalNumber(personalNumber);
+        }
+
+        public async Task DeleteStudentByPersonalNumber(string personalNumber)
+        {
+            if (string.IsNullOrWhiteSpace(personalNumber) || string.IsNullOrEmpty(personalNumber))
+            {
+                throw new InvalidPersonalNumberException("Personal number is null or empty.");
+            }
+            await _studentRepository.DeleteStudent(personalNumber);
+        }
     }
 }

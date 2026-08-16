@@ -19,8 +19,12 @@ namespace QuizMaster.UI
             Console.WriteLine("Welcome to the QuizMaster!");
             Console.WriteLine("1. Register as a new student");
             Console.WriteLine("2. View all students");
-            Console.WriteLine("3. Exit");
+            Console.WriteLine("3. View student from personalnumber");
+            Console.WriteLine("4. Delete student from personalnumber");
+            Console.WriteLine("5. Exit");
+          
             string choice = Console.ReadLine();
+
             switch (choice)
             {
                 case "1":
@@ -50,19 +54,39 @@ namespace QuizMaster.UI
                     Console.WriteLine("Enter Gender");
                     student.Gender = Enum.Parse<Gender>(Console.ReadLine(), true);
 
-                  
-
                     await _studentService.RegistrationStudent(student);
-                    break;
-                    case "2":
-                    var tt =  _studentService.GetAllStudents().Result;
+                
+                break;
 
-                    foreach (var item in tt)
+                case "2":
+                    List<Student> students =  _studentService.GetAllStudents().Result;
+
+                    foreach (var item in students)
                     {
                         Console.WriteLine($"Id: {item.Id}, FirsName: {item.FirsName}, Lastname: {item.Lastname}, Email: {item.Email}, PhoneNumber: {item.PhoneNumber}, PhoneNumber: {item.PhoneNumber}, Password: {item.Password}, VerificationCode: {item.VerificationCode}, IsVerified: {item.IsVerified}, Role: {item.Role}, Gender: {item.Gender}, Grade: {item.Grade}");
+                        //Console.WriteLine(item.ToString());
                     }
+
+                break;
+
+                case "3":
+
+                    Console.WriteLine("Enter PersonalNumber");
+                    string findFromPersonalNumber = Console.ReadLine();
+
+                    Student studentPeronalNumber = await _studentService.GetStudentByPersonalNumber(findFromPersonalNumber);
+
+                    Console.WriteLine($" Id: {studentPeronalNumber.Id},\n FirsName: {studentPeronalNumber.FirsName},\n Lastname: {studentPeronalNumber.Lastname},\n Email: {studentPeronalNumber.Email},\n PhoneNumber: {studentPeronalNumber.PhoneNumber},\n PhoneNumber: {studentPeronalNumber.PhoneNumber},\n Password: {studentPeronalNumber.Password},\n VerificationCode: {studentPeronalNumber.VerificationCode},\n IsVerified: {studentPeronalNumber.IsVerified},\n Role: {studentPeronalNumber.Role},\n Gender: {studentPeronalNumber.Gender},\n Grade: {studentPeronalNumber.Grade}");
+                    //Console.WriteLine(studentPeronalNumber.ToString());
+                break;
+
+                case "4":
+
+                    Console.WriteLine("Enter PersonalNumber");
+                    string deleteFromPersonalNumber = Console.ReadLine();
+
+                    await _studentService.DeleteStudentByPersonalNumber(deleteFromPersonalNumber);
                     break;
-                    //case "3":
             }
         }
     }
