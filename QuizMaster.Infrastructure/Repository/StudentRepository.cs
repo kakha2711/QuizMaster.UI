@@ -25,7 +25,7 @@ namespace QuizMaster.Infrastructure.Repository
                 {
                     var studentData = line.Split(',');
 
-                   
+
 
                     Student studentAdd = new Student
                     {
@@ -46,9 +46,11 @@ namespace QuizMaster.Infrastructure.Repository
                         //Subjects = studentData[3].Split(':')[1]
                     };
 
-                    if(studentAdd.IsDelete == false)
+                    if (studentAdd.IsDelete == false)
                         students.Add(studentAdd);
                 }
+                else
+                    return null;
             }
 
             
@@ -125,10 +127,10 @@ namespace QuizMaster.Infrastructure.Repository
 
             int oldCount = students.Count;
 
-            int existingStudentId = students.FirstOrDefault(s => s.PersonalNumber == student.PersonalNumber).Id;
+            var existingStudentId = students.FindIndex(s => s.PersonalNumber == student.PersonalNumber);
 
-            if (existingStudentId > 0)
-            {
+            //if (existingStudentId > 0)
+            //{
                 students[existingStudentId].FirsName = student.FirsName;
                 students[existingStudentId].Lastname = student.Lastname;
                 students[existingStudentId].Email = student.Email;
@@ -142,16 +144,19 @@ namespace QuizMaster.Infrastructure.Repository
                 students[existingStudentId].Gender = student.Gender;
                 students[existingStudentId].Grade = student.Grade;
                 students[existingStudentId].IsDelete = student.IsDelete;
-            }
-            else
-                throw new DontFindlObjectExeption($"Student with personal number {student.PersonalNumber} not found.");
+            //}
+            //else
+            //    throw new DontFindlObjectExeption($"Student with personal number {student.PersonalNumber} not found.");
 
             int newCount = 0;
 
-            using(StreamWriter writer = new StreamWriter(_studentPath, true))
+            using (StreamWriter writer = new StreamWriter(_studentPath, false))
             {
-                writer.WriteLine();
+                
+            }
 
+            using (StreamWriter writer = new StreamWriter(_studentPath, false))
+            {
                 foreach (var item in students)
                 {
                     writer.WriteLine(item);
