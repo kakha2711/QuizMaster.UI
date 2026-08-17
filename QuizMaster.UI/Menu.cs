@@ -21,7 +21,9 @@ namespace QuizMaster.UI
             Console.WriteLine("2. View all students");
             Console.WriteLine("3. View student from personalnumber");
             Console.WriteLine("4. Delete student from personalnumber");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("5. Verifi student email");
+            Console.WriteLine("6. LogIn Student");
+            Console.WriteLine("7. Exit");
           
             string choice = Console.ReadLine();
 
@@ -72,7 +74,7 @@ namespace QuizMaster.UI
                 case "3":
 
                     Console.WriteLine("Enter PersonalNumber");
-                    string findFromPersonalNumber = Console.ReadLine();
+                    string? findFromPersonalNumber = Console.ReadLine();
 
                     Student studentPeronalNumber = await _studentService.GetStudentByPersonalNumber(findFromPersonalNumber);
 
@@ -83,9 +85,33 @@ namespace QuizMaster.UI
                 case "4":
 
                     Console.WriteLine("Enter PersonalNumber");
-                    string deleteFromPersonalNumber = Console.ReadLine();
+                    string? deleteFromPersonalNumber = Console.ReadLine();
 
                     await _studentService.DeleteStudentByPersonalNumber(deleteFromPersonalNumber);
+                break;
+
+                case "5":
+
+                    Console.WriteLine("Enter student email");
+                    string? studentEmail = Console.ReadLine();
+
+                    Console.WriteLine("Enter Student VerificationCode");
+                    string? StudentVerificationCode = Console.ReadLine();
+
+                    await _studentService.VerifiStudentEmail(studentEmail, StudentVerificationCode);
+
+                    break;
+
+                case "6":
+
+                    Console.WriteLine("Enter StudentUsername");
+                    string? studentUserName = Console.ReadLine();
+
+                    Console.WriteLine("Enter StudentPassword");
+                    string? studentPassword = Console.ReadLine();
+
+                    await _studentService.LogIn(studentUserName, studentPassword);
+
                     break;
             }
         }

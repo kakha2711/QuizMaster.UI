@@ -81,9 +81,8 @@ namespace QuizMaster.Service
             string tt = _studentRepository.UpdateStudent(student).Result;
         }
 
-        public async Task LogIn(string userName, string password)
+        public async Task<Student> LogIn(string userName, string password)
         {
-            Student? student =  GetAllStudents().Result.Find(m=> m.UserName);
 
             if (string.IsNullOrWhiteSpace(userName) && string.IsNullOrWhiteSpace(password))
                 throw new ObjectEmptyException("Username is null or empty.");
@@ -91,7 +90,18 @@ namespace QuizMaster.Service
             if (string.IsNullOrWhiteSpace(password) && string.IsNullOrWhiteSpace(password))
                 throw new ObjectEmptyException("password is null or empty.");
 
-            if(BCrypt.Net.BCrypt.Verify(password, student.Password))
+            Student? student = await _studentRepository.GetStudentByUserName(userName);
+
+            if(student == null)
+                throw new DontFindlObjectExeption("Dont find this username");
+
+            if (student.IsDelete)
+                throw new ObjectEmptyException("This student with this username has been deleted.");
+
+            if (BCrypt.Net.BCrypt.Verify(password, student.Password))
+                throw new InvalidPersonalNumberException("Password is invalid");
+
+            return student;
 
         }
 

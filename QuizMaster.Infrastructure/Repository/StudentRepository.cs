@@ -218,6 +218,14 @@ namespace QuizMaster.Infrastructure.Repository
 
         }
 
-
+        public async Task<Student> GetStudentByUserName(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(username))
+            {
+                throw new InvalidPersonalNumberException("Username is null or empty.");
+            }
+            var students = await GetAllStudent();
+            return students.FirstOrDefault(s => s.UserName == username);
+        }
     }
 }
