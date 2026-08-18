@@ -110,7 +110,9 @@ namespace QuizMaster.UI
                     Console.WriteLine("Enter StudentPassword");
                     string? studentPassword = Console.ReadLine();
 
-                    await _studentService.LogIn(studentUserName, studentPassword);
+                    Student studentLogIn = await _studentService.LogIn(studentUserName, studentPassword);
+
+                    Console.WriteLine(studentLogIn.ToString());
 
                     break;
             }

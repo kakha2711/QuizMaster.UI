@@ -4,7 +4,7 @@ namespace QuizMaster.Service
 {
     public class EmailService
     {
-        public static void SendEmail(string to, string subject, string body, string email)
+        public static void SendEmail(string to, string subject, string body)
         {
 
 
@@ -16,7 +16,7 @@ namespace QuizMaster.Service
 
 
             MailMessage message = new MailMessage();
-            message.From = new MailAddress($"{email}");
+            message.From = new MailAddress("datunashvilid0@gmail.com");
             message.To.Add(to);
             //message.To.Add("stepacc210@gmail.com");
             message.Subject = subject;

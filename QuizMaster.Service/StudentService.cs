@@ -1,8 +1,10 @@
 ﻿
 using BCrypt.Net;
+using QuizMaster.Core;
 using QuizMaster.Core.Interface;
 using QuizMaster.Core.Model;
 using QuizMaster.Service.Exeption;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace QuizMaster.Service
 {
@@ -29,6 +31,15 @@ namespace QuizMaster.Service
             student.VerificationCode = random.Next(1000, 9999).ToString();
 
             await _studentRepository.AddStudent(student);
+
+            var StudentWithPersonalNumber = GetStudentByPersonalNumber(student.PersonalNumber);
+
+            if (StudentWithPersonalNumber == null)
+            {
+                throw new DontFindlObjectExeption("Student not found after registration.");
+            }
+
+            EmailService.SendEmail(student.Email, "Email Verification", $"Your verification code is: {student.VerificationCode}");
 
         }
 
@@ -73,12 +84,16 @@ namespace QuizMaster.Service
                 throw new DontFindlObjectExeption("Student not found.");
             }
 
-            if(student.VerificationCode == verificationCode)
-                student.IsVerified = true;
+            var tt1 = student.VerificationCode;
 
+            if (tt1 == verificationCode)
+                student.IsVerified = true;
+            else
             throw new InvalidPersonalNumberException("This is an invalid verification code.");
 
-            string tt = _studentRepository.UpdateStudent(student).Result;
+           await _studentRepository.UpdateStudent(student);
+
+            ColloringConsole.Success("Email verification successful.");
         }
 
         public async Task<Student> LogIn(string userName, string password)
@@ -97,6 +112,9 @@ namespace QuizMaster.Service
 
             if (student.IsDelete)
                 throw new ObjectEmptyException("This student with this username has been deleted.");
+
+            if (student.IsVerified == false)
+                throw new UnverifiedEmailException("This student's email is not verified.");
 
             if (BCrypt.Net.BCrypt.Verify(password, student.Password))
                 throw new InvalidPersonalNumberException("Password is invalid");
