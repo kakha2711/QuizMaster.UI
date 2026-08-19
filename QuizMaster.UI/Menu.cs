@@ -56,6 +56,7 @@ namespace QuizMaster.UI
                     Console.WriteLine("Enter Gender");
                     student.Gender = Enum.Parse<Gender>(Console.ReadLine(), true);
 
+
                     await _studentService.RegistrationStudent(student);
                 
                 break;

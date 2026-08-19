@@ -8,7 +8,7 @@ namespace QuizMaster.Core.Interface
         
         public Task<List<Student>> GetAllStudent();
         public Task<Student> GetStudentByPersonalNumber(string perSonalNumber);
-        public Task AddStudent(Student student);
+        public Task AddStudent<T>(T student) where T : Person;
         public Task<string> UpdateStudent(Student student);
         public Task DeleteStudent(string personalNumber);
 

@@ -73,48 +73,56 @@ namespace QuizMaster.Infrastructure.Repository
 
         }
 
-        public async Task AddStudent(Student student)
+        public async Task AddStudent<T>(T student1) where T : Person
         {
-            if (student == null)
+
+            if (student1 == null)
             {
                 throw new ObjectEmptyException("Student object is null.");
             }
 
-            var students = GetAllStudent().Result;
-
-
-            if (students.Count == 0)
-                student.Id = 1;
-            else
-                student.Id = students.Max(s => s.Id) + 1;
-
-            student.Password = BCrypt.Net.BCrypt.HashPassword(student.Password);
-            string studentnew = JsonSerializer.Serialize(student);
-
-            if (string.IsNullOrWhiteSpace(studentnew) || string.IsNullOrEmpty(studentnew))
+            if (student1 is Student student)
             {
-                throw new InvalidDataException("Serialized student data is null or empty.");
+                var students = GetAllStudent().Result;
+
+
+                if (students.Count == 0)
+                    student.Id = 1;
+                else
+                    student.Id = students.Max(s => s.Id) + 1;
+
+                student.Password = BCrypt.Net.BCrypt.HashPassword(student.Password);
+                string studentnew = JsonSerializer.Serialize(student);
+
+                if (string.IsNullOrWhiteSpace(studentnew) || string.IsNullOrEmpty(studentnew))
+                {
+                    throw new InvalidDataException("Serialized student data is null or empty.");
+                }
+
+                if (students.Any(s => s.PersonalNumber == student.PersonalNumber))
+                {
+                    throw new DuplicatePersonalNumberException($"A student with personal number {student.PersonalNumber} already exists.");
+                }
+
+                if (students.Count == 0)
+                    File.AppendAllText(_studentPath, studentnew);
+                else
+                    File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
+
+                Student? addedStudent = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == student.PersonalNumber);
+
+
+                if (addedStudent != null)
+                    ColloringConsole.Success($"Student with personal number {addedStudent.PersonalNumber} added successfully.");
+                else
+                    ColloringConsole.Error($"Failed to add student with personal number {student.PersonalNumber}.");
             }
 
-            if (students.Any(s => s.PersonalNumber == student.PersonalNumber))
+            if(student1 is Lecturer lecturer)
             {
-                throw new DuplicatePersonalNumberException($"A student with personal number {student.PersonalNumber} already exists.");
+                // Handle Lecturer addition logic here if needed
+                //aq unda davamatoleqtures kodi
             }
-
-            if (students.Count == 0)
-                File.AppendAllText(_studentPath, studentnew);
-            else
-                File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
-
-            Student? addedStudent = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == student.PersonalNumber);
-
-            //string result = addedStudent != null ? $"Student with personal number {addedStudent.PersonalNumber} added successfully." : $"Failed to add student with personal number {student.PersonalNumber}.";
-
-            if (addedStudent != null)
-                ColloringConsole.Success($"Student with personal number {addedStudent.PersonalNumber} added successfully.");
-            else
-                ColloringConsole.Error($"Failed to add student with personal number {student.PersonalNumber}.");
-
         }
 
 

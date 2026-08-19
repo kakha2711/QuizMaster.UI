@@ -6,6 +6,10 @@ namespace QuizMaster.Core.Model
 {
     public class Person
     {
+        public int Id { get; set; }
+        public bool IsDelete { get; set; } = false;
+
+
         public string FirsName { get; set; }
         public string Lastname { get; set; }
         public string Email { get; set; }
@@ -54,6 +58,7 @@ namespace QuizMaster.Core.Model
 
             RuleFor(x => x.Role).IsInEnum().WithMessage("Role must be a valid enum value.");
             RuleFor(x => x.Gender).IsInEnum().WithMessage("Gender must be a valid enum value.");
+            RuleFor(x => x.Id).InclusiveBetween(1, int.MaxValue).WithMessage("Id must be greater than 0.");
         }
     }
 }
