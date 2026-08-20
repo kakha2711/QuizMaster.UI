@@ -10,66 +10,82 @@ namespace QuizMaster.Infrastructure.Repository
     public class StudentRepository : IStudentRepository
     {
         private readonly string _studentPath = "C:\\Users\\Kakha\\source\\repos\\QuizMaster.UI\\QuizMaster.Infrastructure\\Data\\Student.txt";
+        private readonly string _lecturePath = "C:\\Users\\Kakha\\source\\repos\\QuizMaster.UI\\QuizMaster.Infrastructure\\Data\\Lecture.txt";
 
-
-        public async Task<List<Student>> GetAllStudent()
+        public async Task<List<T>> GetAllStudent<T>(string role) where T : Person
         {
-            List<Student> students = new List<Student>();
-            string[] lines = File.ReadAllLines(_studentPath);
+            List<T> students = new List<T>();
 
-            foreach (var line in lines)
+            if (role == "Student")
             {
-                Student? student = JsonSerializer.Deserialize<Student>(line);
-                if (student != null)
+
+                string[] lines = File.ReadAllLines(_studentPath);
+
+                foreach (var line in lines)
                 {
-                    var studentData = line.Split(',');
-
-
-
-                    Student studentAdd = new Student
+                    Student? student = JsonSerializer.Deserialize<Student>(line);
+                    if (student != null)
                     {
-                        Id = int.Parse(studentData[0].Split(':')[1]),
-                        FirsName = studentData[4].Split(':')[1].Trim('"'),
-                        Lastname = studentData[5].Split(':')[1].Trim('"'),
-                        Email = studentData[6].Split(':')[1].Trim('"'),
-                        PhoneNumber = studentData[7].Split(':')[1].Trim('"'),
-                        PersonalNumber = studentData[8].Split(':')[1].Trim('"'),
-                        UserName = studentData[9].Split(':')[1].Trim('"'),
-                        Password = studentData[10].Split(':')[1].Trim('"'),
-                        VerificationCode = studentData[11].Split(':')[1].Trim('"'),
-                        IsVerified = bool.Parse(studentData[12].Split(':')[1]),
-                        Role = Enum.Parse<Role>(studentData[13].Split(':')[1]),
-                        Gender = Enum.Parse<Gender>(studentData[14].Split(':')[1][0].ToString()),
-                        Grade = double.Parse(studentData[1].Split(':')[1]),
-                        IsDelete = bool.Parse(studentData[2].Split(':')[1]),
-                        //Subjects = studentData[3].Split(':')[1]
-                    };
+                        var studentData = line.Split(',');
 
-                    //if (studentAdd.IsDelete == false)
-                    students.Add(studentAdd);
+
+
+                        Student studentAdd = new Student
+                        {
+                            Id = int.Parse(studentData[0].Split(':')[1]),
+                            FirsName = studentData[4].Split(':')[1].Trim('"'),
+                            Lastname = studentData[5].Split(':')[1].Trim('"'),
+                            Email = studentData[6].Split(':')[1].Trim('"'),
+                            PhoneNumber = studentData[7].Split(':')[1].Trim('"'),
+                            PersonalNumber = studentData[8].Split(':')[1].Trim('"'),
+                            UserName = studentData[9].Split(':')[1].Trim('"'),
+                            Password = studentData[10].Split(':')[1].Trim('"'),
+                            VerificationCode = studentData[11].Split(':')[1].Trim('"'),
+                            IsVerified = bool.Parse(studentData[12].Split(':')[1]),
+                            Role = Enum.Parse<Role>(studentData[13].Split(':')[1]),
+                            Gender = Enum.Parse<Gender>(studentData[14].Split(':')[1][0].ToString()),
+                            Grade = double.Parse(studentData[1].Split(':')[1]),
+                            IsDelete = bool.Parse(studentData[2].Split(':')[1]),
+                            //Subjects = studentData[3].Split(':')[1]
+                        };
+
+                        //if (studentAdd.IsDelete == false)
+                        students.Add(studentAdd as T);
+                    }
+                    else
+                        return null;
                 }
-                else
-                    return null;
+
             }
 
+            if (role == "Lecturer")
+            {
+                string[] lines = File.ReadAllLines(_lecturePath);
 
+                foreach (string line in lines)
+                {
+
+                }
+            }
             return students;
         }
 
 
         public async Task<Student> GetStudentByPersonalNumber(string perSonalNumber)
         {
-            if (string.IsNullOrWhiteSpace(perSonalNumber) || string.IsNullOrEmpty(perSonalNumber))
-            {
-                throw new InvalidPersonalNumberException("Personal number is null or empty.");
-            }
+            //if (string.IsNullOrWhiteSpace(perSonalNumber) || string.IsNullOrEmpty(perSonalNumber))
+            //{
+            //    throw new InvalidPersonalNumberException("Personal number is null or empty.");
+            //}
 
-            Student? student = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == perSonalNumber);
+            //Student? student = GetAllStudent().Result.FirstOrDefault(x => x.PersonalNumber == perSonalNumber);
 
-            if (student == null)
-                throw new DontFindlObjectExeption($"Student with personal number {perSonalNumber} not found.");
+            //if (student == null)
+            //    throw new DontFindlObjectExeption($"Student with personal number {perSonalNumber} not found.");
 
-            return student;
+            //return student;
+
+            throw new NotImplementedException();
 
         }
 
@@ -83,7 +99,7 @@ namespace QuizMaster.Infrastructure.Repository
 
             if (student1 is Student student)
             {
-                var students = GetAllStudent().Result;
+                var students = GetAllStudent(student.Role).Result;
 
 
                 if (students.Count == 0)
@@ -118,122 +134,131 @@ namespace QuizMaster.Infrastructure.Repository
                     ColloringConsole.Error($"Failed to add student with personal number {student.PersonalNumber}.");
             }
 
-            if(student1 is Lecturer lecturer)
+            if (student1 is Lecturer lecturer)
             {
                 // Handle Lecturer addition logic here if needed
                 //aq unda davamatoleqtures kodi
             }
+
+            
         }
 
 
         public async Task<string> UpdateStudent(Student student)
         {
-            if (student == null)
-            {
-                throw new ObjectEmptyException("Student object is null.");
-            }
-
-            List<Student> students = await GetAllStudent();
-
-            int oldCount = students.Count;
-
-            var existingStudentId = students.FindIndex(s => s.PersonalNumber == student.PersonalNumber);
-
-            students[existingStudentId].FirsName = student.FirsName;
-            students[existingStudentId].Lastname = student.Lastname;
-            students[existingStudentId].Email = student.Email;
-            students[existingStudentId].PhoneNumber = student.PhoneNumber;
-            students[existingStudentId].PersonalNumber = student.PersonalNumber;
-            students[existingStudentId].UserName = student.UserName;
-            students[existingStudentId].Password = student.Password;
-            students[existingStudentId].VerificationCode = student.VerificationCode;
-            students[existingStudentId].IsVerified = student.IsVerified;
-            students[existingStudentId].Role = student.Role;
-            students[existingStudentId].Gender = student.Gender;
-            students[existingStudentId].Grade = student.Grade;
-            students[existingStudentId].IsDelete = student.IsDelete;
-
-
-            int newCount = 0;
-
-            //using (StreamWriter writer = new StreamWriter(_studentPath, false))
+            //if (student == null)
             //{
-
+            //    throw new ObjectEmptyException("Student object is null.");
             //}
 
-            //using (StreamWriter writer = new StreamWriter(_studentPath, true))
+            //List<Student> students = await GetAllStudent();
+
+            //int oldCount = students.Count;
+
+            //var existingStudentId = students.FindIndex(s => s.PersonalNumber == student.PersonalNumber);
+
+            //students[existingStudentId].FirsName = student.FirsName;
+            //students[existingStudentId].Lastname = student.Lastname;
+            //students[existingStudentId].Email = student.Email;
+            //students[existingStudentId].PhoneNumber = student.PhoneNumber;
+            //students[existingStudentId].PersonalNumber = student.PersonalNumber;
+            //students[existingStudentId].UserName = student.UserName;
+            //students[existingStudentId].Password = student.Password;
+            //students[existingStudentId].VerificationCode = student.VerificationCode;
+            //students[existingStudentId].IsVerified = student.IsVerified;
+            //students[existingStudentId].Role = student.Role;
+            //students[existingStudentId].Gender = student.Gender;
+            //students[existingStudentId].Grade = student.Grade;
+            //students[existingStudentId].IsDelete = student.IsDelete;
+
+
+            //int newCount = 0;
+
+            ////using (StreamWriter writer = new StreamWriter(_studentPath, false))
+            ////{
+
+            ////}
+
+            ////using (StreamWriter writer = new StreamWriter(_studentPath, true))
+            ////{
+            ////    foreach (var item in students)
+            ////    {
+            ////        writer.WriteLine(item);
+            ////        newCount++;
+            ////    }
+            ////}
+
+            //File.WriteAllText(_studentPath, string.Empty);
+
+            //foreach (var item in students)
             //{
-            //    foreach (var item in students)
-            //    {
-            //        writer.WriteLine(item);
-            //        newCount++;
-            //    }
+            //    //File.AppendAllText(_studentPath, item + Environment.NewLine);
+            //    //AddStudent(item);
+
+            //    string studentnew = JsonSerializer.Serialize(item);
+
+            //    var existingStudent = GetAllStudent().Result;
+
+            //    if (existingStudent.Count == 0)
+
+            //        File.AppendAllText(_studentPath, studentnew);
+            //    else
+            //        File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
             //}
 
-            File.WriteAllText(_studentPath, string.Empty);
 
-            foreach (var item in students)
-            {
-                //File.AppendAllText(_studentPath, item + Environment.NewLine);
-                //AddStudent(item);
+            //string result = "";
 
-                string studentnew = JsonSerializer.Serialize(item);
+            //result = oldCount == newCount ? $"Student with personal number {student.PersonalNumber} updated successfully." : $"Failed to update student with personal number {student.PersonalNumber}.";
 
-                var existingStudent = GetAllStudent().Result;
+            //return result;
 
-                if (existingStudent.Count == 0)
+            throw new NotImplementedException();
 
-                    File.AppendAllText(_studentPath, studentnew);
-                else
-                    File.AppendAllText(_studentPath, Environment.NewLine + studentnew);
-            }
-
-
-            string result = "";
-
-            result = oldCount == newCount ? $"Student with personal number {student.PersonalNumber} updated successfully." : $"Failed to update student with personal number {student.PersonalNumber}.";
-
-            return result;
         }
 
         public async Task DeleteStudent(string personalNumber)
         {
-            if (string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
-            {
-                throw new InvalidPersonalNumberException("Personal number is null or empty.");
-            }
+            //if (string.IsNullOrEmpty(personalNumber) || string.IsNullOrWhiteSpace(personalNumber))
+            //{
+            //    throw new InvalidPersonalNumberException("Personal number is null or empty.");
+            //}
 
-            List<Student> students = await GetAllStudent();
+            //List<Student> students = await GetAllStudent();
 
-            if (students.Count > 0)
-            {
-                Student? studentToDelete = students.FirstOrDefault(s => s.PersonalNumber == personalNumber);
-                if (studentToDelete != null)
-                {
-                    studentToDelete.IsDelete = true;
-                    await UpdateStudent(studentToDelete);
-                    ColloringConsole.Success($"Student with personal number {personalNumber} deleted successfully.");
-                }
-                else
-                {
-                    throw new DontFindlObjectExeption($"Student with personal number {personalNumber} not found.");
-                }
-            }
-            else
-            {
-                throw new DontFindlObjectExeption("No students found to delete.");
-            }
+            //if (students.Count > 0)
+            //{
+            //    Student? studentToDelete = students.FirstOrDefault(s => s.PersonalNumber == personalNumber);
+            //    if (studentToDelete != null)
+            //    {
+            //        studentToDelete.IsDelete = true;
+            //        await UpdateStudent(studentToDelete);
+            //        ColloringConsole.Success($"Student with personal number {personalNumber} deleted successfully.");
+            //    }
+            //    else
+            //    {
+            //        throw new DontFindlObjectExeption($"Student with personal number {personalNumber} not found.");
+            //    }
+            //}
+            //else
+            //{
+            //    throw new DontFindlObjectExeption("No students found to delete.");
+            //}
+
+            throw new NotImplementedException();
 
         }
 
         public async Task<Student> GetStudentByUserName(string username)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(username))
-            {
-                throw new InvalidPersonalNumberException("Username is null or empty.");
-            }
-            var students = await GetAllStudent();
-            return students.FirstOrDefault(s => s.UserName == username);
+            //if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(username))
+            //{
+            //    throw new InvalidPersonalNumberException("Username is null or empty.");
+            //}
+            //var students = await GetAllStudent();
+            //return students.FirstOrDefault(s => s.UserName == username);
+
+            throw new NotImplementedException();
         }
     }
 }

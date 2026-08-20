@@ -6,7 +6,7 @@ namespace QuizMaster.Core.Interface
     public interface IStudentRepository
     {
         
-        public Task<List<Student>> GetAllStudent();
+        public Task<List<T>> GetAllStudent<T>(string role) where T : Person;
         public Task<Student> GetStudentByPersonalNumber(string perSonalNumber);
         public Task AddStudent<T>(T student) where T : Person;
         public Task<string> UpdateStudent(Student student);
